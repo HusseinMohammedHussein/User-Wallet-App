@@ -1,8 +1,13 @@
+import 'package:digital_secure_assignment/core/services/service_locator.dart';
+import 'package:digital_secure_assignment/core/utils/app_colors.dart';
 import 'package:nb_utils/nb_utils.dart';
-import 'package:todo_app/core/functions/navigation.dart';
-import 'package:todo_app/core/utils/app_strings.dart';
-import 'package:todo_app/core/utils/app_text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
+
+import '../../../../core/database/cache/cache_helper.dart';
+import '../../../../core/functions/navigation.dart';
+import '../../../../core/utils/app_strings.dart';
+import '../../../../core/utils/app_text_styles.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
@@ -14,7 +19,14 @@ class SplashView extends StatefulWidget {
 class _SplashViewState extends State<SplashView> {
   @override
   void initState() {
-    delayedNavigate(context, "/home");
+
+    var isUserLogged = getIt<CacheHelper>().getData(key: AppKeys.objectIdKey);
+    log("getObjId__: $isUserLogged");
+    if (isUserLogged != null) {
+      delayedNavigate(context, "/home");
+    } else {
+      delayedNavigate(context, "/login");
+    }
     super.initState();
   }
 
@@ -27,11 +39,8 @@ class _SplashViewState extends State<SplashView> {
         children: [
           Text(
             AppStrings.splashFirstWord,
-            style: CustomTextStyles.style50,
-          ),
-          const Text(
-            AppStrings.splashSecondWord,
-            style: CustomTextStyles.style20,
+            style: CustomTextStyles.style25Bold
+                .copyWith(color: AppColors.primaryColor),
           ),
         ],
       ).center(),

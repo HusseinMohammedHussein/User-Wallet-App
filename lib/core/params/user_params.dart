@@ -1,4 +1,4 @@
 class UserParams {
-  final String id;
-  UserParams({required this.id});
+  final String objectId;
+  UserParams({required this.objectId});
 }

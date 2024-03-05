@@ -1,13 +1,13 @@
-abstract class AuthState{}
+abstract class HomeState{}
 
-class InitAuthState extends AuthState{}
+class InitHomeState extends HomeState{}
 
-final class AuthLoadingState extends AuthState {}
+final class HomeLoadingState extends HomeState {}
 
-final class AuthSuccessState extends AuthState {}
+final class HomeSuccessState extends HomeState {}
 
-final class AuthFailureState extends AuthState {
+final class HomeFailureState extends HomeState {
   final String errMessage;
 
-  AuthFailureState({required this.errMessage});
+  HomeFailureState({required this.errMessage});
 }

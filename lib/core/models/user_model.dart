@@ -9,19 +9,26 @@ class UserModel {
   String? objectId;
   @JsonKey(name: ApiKey.username)
   String? username;
-  @JsonKey(name: ApiKey.wallet)
-  String? wallet;
-  @JsonKey(name: ApiKey.lastActivity)
-  String? lastActivity;
+  @JsonKey(name: ApiKey.walletBalance)
+  String? walletBalance;
+  @JsonKey(name: ApiKey.transactionAmount)
+  String? transactionAmount;
+  @JsonKey(name: ApiKey.walletUpdateDate)
+  String? walletUpdateDate;
+  @JsonKey(name: ApiKey.transactionDate)
+  String? transactionDate;
   @JsonKey(name: ApiKey.createdAt)
   String? createdAt;
 
+
   UserModel(
       {this.objectId,
-        this.username,
-        this.wallet,
-        this.lastActivity,
-        this.createdAt});
+      this.username,
+      this.walletBalance,
+      this.transactionAmount,
+      this.walletUpdateDate,
+      this.transactionDate,
+      this.createdAt});
 
   factory UserModel.fromJson(Map<String, dynamic> json) => _$UserModelFromJson(json);
 

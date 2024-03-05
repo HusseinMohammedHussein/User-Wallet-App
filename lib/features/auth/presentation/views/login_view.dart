@@ -1,9 +1,21 @@
+import 'package:digital_secure_assignment/core/functions/custom_toast.dart';
+import 'package:digital_secure_assignment/core/functions/date_service.dart';
+import 'package:digital_secure_assignment/core/functions/email_regexp.dart';
+import 'package:digital_secure_assignment/core/functions/navigation.dart';
 import 'package:digital_secure_assignment/core/widgets/custom_btn.dart';
 import 'package:digital_secure_assignment/core/widgets/custom_text_form_field.dart';
+import 'package:digital_secure_assignment/features/auth/presentation/cubit/auth_state.dart';
+import 'package:digital_secure_assignment/features/auth/presentation/widgets/custom_error_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
+import '../../../../core/database/cache/cache_helper.dart';
+import '../../../../core/utils/app_assets.dart';
 import '../../../../core/utils/app_colors.dart';
+import '../../../../core/utils/app_strings.dart';
+import '../cubit/auth_cubit.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -14,68 +26,95 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   late Size size;
-  TextEditingController usernameController = TextEditingController();
+  TextEditingController usernameOrEmailCont = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  String walletBalance = '',
+      transactionAmount = '',
+      walletUpdateDate = '',
+      transactionDate = '';
 
-  _errorMessageWidget() {
-    log("Size Equal= ${size.width * 0.7}");
+  _initDataValues() {
+    double initValue = 1000;
+    DateTime date = DateTime.now();
 
-    return Container(
-      width: size.width * 0.7,
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      decoration: BoxDecoration(
-        color: AppColors.red,
-        borderRadius: const BorderRadius.all(Radius.circular(10))
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.asset("assets/images/ic_cancel.png", height: 30, width: 30),
-          10.width,
-          const Text("Credentials are incorrect", style: TextStyle(color: Colors.white, fontSize: 18),)
-        ],
-      ),
-    );
+    walletBalance = initValue.toString();
+    transactionAmount = (initValue - 200).toString();
+    walletUpdateDate = parseDate(date);
+    transactionDate = parseDate(date.add(15.days));
   }
 
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
-    return Scaffold(
-      body: SafeArea(
-          child: Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  alignment: Alignment.topLeft,
-                  image: AssetImage("assets/images/login_bg.png"),
-                  fit: BoxFit.cover,
-                ),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              margin: EdgeInsets.only(bottom: size.height * 0.1),
-              height: size.height,
-              child: Column(
-                children: [
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _errorMessageWidget(),
-                        15.height,
-                        CustomTextFormField(
-                            textEditingController: usernameController,
-                            hintText: "Username or Email"),
-                        15.height,
-                        CustomTextFormField(
-                          hintText: "Password",
-                          textEditingController: passwordController,
-                        ),
-                      ],
+    return BlocConsumer<AuthCubit, AuthState>(listener: (context, state) {
+      if (state is AuthFailureState) {
+        showToast(state.errMessage);
+      } else if (state is AuthSuccessState) {
+        customReplacementNavigate(context, "/home");
+      }
+    }, builder: (context, state) {
+      var authCubit = BlocProvider.of<AuthCubit>(context);
+      return Scaffold(
+        body: SafeArea(
+            child: Form(
+                key: authCubit.formKey,
+                child: Container(
+                    decoration: const BoxDecoration(
+                      image: DecorationImage(
+                        alignment: Alignment.topLeft,
+                        image: AssetImage(Assets.imagesLoginBg),
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                  ),
-                  CustomBtn(text: "Register/Log in ", onPressed: () {}),
-                ],
-              ))),
-    );
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    margin: EdgeInsets.only(bottom: size.height * 0.1),
+                    height: size.height,
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              if (state is AuthFailureState)
+                                const CustomErrorWidget(),
+                              15.height,
+                              CustomTextFormField(
+                                  textEditingController: usernameOrEmailCont,
+                                  hintText: AppStrings.usernameOrEmail),
+                              15.height,
+                              CustomTextFormField(
+                                hintText: AppStrings.password,
+                                textEditingController: passwordController,
+                              ),
+                            ],
+                          ),
+                        ),
+                        CustomBtn(
+                            text: AppStrings.registerLogin,
+                            onPressed: () async {
+                              if (authCubit.formKey.currentState!.validate()) {
+                                var isEmail =
+                                    checkIsInputEmail(usernameOrEmailCont.text);
+                                log("is_input_email: $isEmail");
+                                if (isEmail) {
+                                  authCubit.email = usernameOrEmailCont.text;
+                                } else {
+                                  authCubit.username = usernameOrEmailCont.text;
+                                }
+                                authCubit.password = passwordController.text;
+
+                                _initDataValues();
+
+                                authCubit.walletBalance = walletBalance;
+                                authCubit.walletUpdateDate = walletUpdateDate;
+                                authCubit.transactionAmount = transactionAmount;
+                                authCubit.transactionDate = transactionDate;
+                                await authCubit.createNewUser();
+                              }
+                            }),
+                      ],
+                    )))),
+      );
+    });
   }
 }

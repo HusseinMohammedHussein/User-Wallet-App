@@ -9,15 +9,19 @@ part of 'user_model.dart';
 UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
       objectId: json['objectId'] as String?,
       username: json['username'] as String?,
-      wallet: json['wallet'] as String?,
-      lastActivity: json['last_activity'] as String?,
+      walletBalance: json['walletBalance'] as String?,
+      transactionAmount: json['transactionAmount'] as String?,
+      walletUpdateDate: json['walletUpdateDate'] as String?,
+      transactionDate: json['transactionDate'] as String?,
       createdAt: json['createdAt'] as String?,
     );
 
 Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
       'objectId': instance.objectId,
       'username': instance.username,
-      'wallet': instance.wallet,
-      'last_activity': instance.lastActivity,
+      'walletBalance': instance.walletBalance,
+      'transactionAmount': instance.transactionAmount,
+      'walletUpdateDate': instance.walletUpdateDate,
+      'transactionDate': instance.transactionDate,
       'createdAt': instance.createdAt,
     };

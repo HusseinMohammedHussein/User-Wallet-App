@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 String parseDate(DateTime dateTime) {
-  return DateFormat('EE. yyyy/MM/dd').format(dateTime);
+  return DateFormat('dd/MM').format(dateTime);
 }
 
 String getWelcomeMessageBasedOnTime() {
