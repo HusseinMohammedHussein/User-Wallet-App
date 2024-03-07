@@ -48,7 +48,7 @@ class _LoginViewState extends State<LoginView> {
     size = MediaQuery.of(context).size;
     return BlocConsumer<AuthCubit, AuthState>(listener: (context, state) {
       if (state is AuthFailureState) {
-        showToast(state.errMessage);
+        log("auth_failure_tate: ${state.errMessage}");
       } else if (state is AuthSuccessState) {
         customReplacementNavigate(context, "/home");
       }
@@ -83,6 +83,7 @@ class _LoginViewState extends State<LoginView> {
                                   hintText: AppStrings.usernameOrEmail),
                               15.height,
                               CustomTextFormField(
+                                isPassword: true,
                                 hintText: AppStrings.password,
                                 textEditingController: passwordController,
                               ),

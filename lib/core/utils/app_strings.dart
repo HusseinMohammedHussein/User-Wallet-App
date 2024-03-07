@@ -15,6 +15,7 @@ abstract class AppStrings {
       lastUpdate = "Last update",
       transactionOn = "Transaction on",
       users = "Users",
+      test = "test",
       totalSpending = "Total Spending",
       lastSpend = "Last spend";
 }

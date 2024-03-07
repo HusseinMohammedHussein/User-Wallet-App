@@ -26,7 +26,7 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       emit(AuthLoadingState());
 
-      var user = ParseUser.createUser(username ?? "", password, email ?? "")
+      var user = ParseUser.createUser(username, password, email)
         ..set("walletBalance", walletBalance)
         ..set("transactionAmount", transactionAmount)
         ..set("walletUpdateDate", walletUpdateDate)
@@ -35,7 +35,7 @@ class AuthCubit extends Cubit<AuthState> {
       var response = await user.signUp(allowWithoutEmail: true);
       if (response.success) {
         user = response.result;
-        log("user_login_success: ${user.toJson()}");
+        log("user_signup_success: ${user.toJson()}");
       } else if (response.statusCode == 202) {
         response = await user.login();
         if (response.success) {
@@ -60,6 +60,8 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthSuccessState());
     } on ParseError catch (e) {
       emit(AuthFailureState(errMessage: e.message));
+    } catch(e) {
+      emit(AuthFailureState(errMessage: e.toString()));
     }
   }
 }
