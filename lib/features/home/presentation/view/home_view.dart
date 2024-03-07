@@ -1,3 +1,5 @@
+import 'package:digital_secure_assignment/core/functions/navigation.dart';
+import 'package:digital_secure_assignment/core/services/service_locator.dart';
 import 'package:digital_secure_assignment/core/utils/app_assets.dart';
 import 'package:digital_secure_assignment/core/utils/app_colors.dart';
 import 'package:digital_secure_assignment/core/utils/app_strings.dart';
@@ -11,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nb_utils/nb_utils.dart';
 
+import '../../../../core/database/cache/cache_helper.dart';
 import '../../../../core/utils/app_text_styles.dart';
 
 class HomeView extends StatefulWidget {
@@ -60,8 +63,11 @@ class _HomeViewState extends State<HomeView> {
                               const BalanceCards(),
                               30.height,
                               CustomBtn(
-                                text: "Test",
-                                onPressed: (){},
+                                text: AppStrings.test,
+                                onPressed: (){
+                                  getIt<CacheHelper>().clearData();
+                                  customReplacementNavigate(context, "/login");
+                                },
                               ),
                               30.height,
                               Text(
